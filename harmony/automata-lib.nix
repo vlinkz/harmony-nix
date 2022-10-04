@@ -6,17 +6,18 @@
 
 pythonver.buildPythonPackage rec {
   pname = "automata-lib";
-  version = "5.0.0";
+  version = "6.0.2";
 
   disabled = pythonver.pythonOlder "3.6";
 
   src = pythonver.fetchPypi {
     inherit pname version;
-    sha256 = "sha256-YMUmtNrWes4rile5OlPTi2UEBQsAiEXKclRa/ZvnuQw=";
+    sha256 = "sha256-ABoGQEcz1mepjoMvK/WSfxAnTHjTJtJaq592fjDqxnU=";
   };
 
-  propagatedBuildInputs = with pkgs; [
-    pythonver.pydot
+  propagatedBuildInputs = with pythonver; [
+    pydot
+    networkx
   ];
 
   doCheck = false;

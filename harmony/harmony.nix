@@ -9,13 +9,13 @@ let
 in
 pythonver.buildPythonPackage rec {
   pname = "harmony";
-  version = "1.2.2402";
+  version = "1.2.2769";
 
   disabled = pythonver.pythonOlder "3.6";
 
   src = pythonver.fetchPypi {
     inherit pname version;
-    sha256 = "sha256-D245/Pg9RI7vMkAlTFR9OA3mMnD7OyiepVCoEmnPniY=";
+    sha256 = "sha256-RC1yUnMmTVMzxd4p4+jit99glFLbSNKJ8HiJD3Q42lg=";
   };
 
   propagatedBuildInputs = with pkgs; [
