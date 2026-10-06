@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Install Nix (no init system in the sandbox, so the daemon runs as a service).
+if [ ! -x /nix/var/nix/profiles/default/bin/nix ]; then
+  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix -o /tmp/nix-install.sh
+  sh /tmp/nix-install.sh install linux --init none --no-confirm --extra-conf "sandbox = false"
+fi
+for bin in nix nix-build nix-shell nix-store; do
+  ln -sf "/nix/var/nix/profiles/default/bin/$bin" "/usr/local/bin/$bin"
+done
+
+ns services start nix-daemon
+for _ in $(seq 1 30); do
+  [ -S /nix/var/nix/daemon-socket/socket ] && nix store info >/dev/null 2>&1 && break
+  sleep 1
+done
+nix store info >/dev/null
+
+# Build harmony and prefetch the dev shell; ./result/bin/harmony is the CLI.
+grep -qxF 'result' .git/info/exclude || echo 'result' >> .git/info/exclude
+nix build .#harmony
+nix develop -c true

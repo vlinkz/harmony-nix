@@ -1,0 +1,4 @@
+services:
+  # Nix runs in daemon mode; the sandbox has no init system to start it.
+  - name: nix-daemon
+    command: /usr/local/bin/determinate-nixd daemon
