@@ -1,0 +1,3 @@
+services:
+  - name: nix-daemon
+    command: /usr/local/bin/determinate-nixd daemon

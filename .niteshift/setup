@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Install Nix (no init system in the sandbox; the daemon runs as the
+# `nix-daemon` service), then build the harmony flake.
+set -euo pipefail
+
+if [ ! -x /usr/local/bin/determinate-nixd ]; then
+  tmp="$(mktemp -d)"
+  curl -sSfL https://install.determinate.systems/nix -o "$tmp/install.sh"
+  sh "$tmp/install.sh" install linux --init none --no-confirm --extra-conf "sandbox = false"
+  rm -rf "$tmp"
+fi
+
+ns services start nix-daemon
+for _ in $(seq 1 30); do
+  [ -S /nix/var/nix/daemon-socket/socket ] && break
+  sleep 1
+done
+
+. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+grep -qxF result .git/info/exclude || echo result >> .git/info/exclude
+nix build .#harmony
